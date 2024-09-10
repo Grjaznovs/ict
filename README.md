@@ -7,8 +7,9 @@ Docker Desktop 4.34.1
 - `composer update`
 - `docker compose exec phpmyadmin chmod 777 /sessions`
 - `docker compose exec php bash`
-- `chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache`
-- `chmod -R 775 /var/www/storage /var/www/bootstrap/cache`
+- `ls -la`
+- `chown -R (YOUR USER ID):(YOUR USER ID) /var/www/storage /var/www/bootstrap/cache`
+- `chmod -R 777 /var/www/storage /var/www/bootstrap/cache`
 - `composer setup`
 - `exit`
 - `docker compose up -d`
