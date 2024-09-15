@@ -12,6 +12,8 @@ Docker Desktop 4.34.1
 - `chmod -R 777 /var/www/storage /var/www/bootstrap/cache`
 - `composer setup`
 - `exit`
+- `docker-compose exec php php artisan migrate`
+- `docker-compose exec php php artisan db:seed`
 - `docker compose up -d`
 - `npm run dev`
 
