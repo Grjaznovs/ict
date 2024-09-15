@@ -12,7 +12,7 @@
                 multiple
                 required
                 placeholder=""
-                autocomplete="off"
+                autocomplete="on"
                 class="block w-full rounded-sm cursor-pointer"
             >
                 @foreach($categories as $row)
@@ -23,13 +23,21 @@
 
         <div class="mb-2">
             <x-input-label for="title" :value="trans('blog.table.title')" />
-            <x-text-input id="title" class="block mt-1 w-full" type="text" name="title" maxlength="100" :value="old('title')" required autofocus autocomplete="title" />
+            <x-text-input
+                id="title"
+                class="block mt-1 w-full"
+                type="text"
+                name="title"
+                maxlength="100"
+                :value="old('title')"
+                required
+            />
             <x-input-error :messages="$errors->get('title')" class="mt-2" />
         </div>
 
         <div class="mb-6">
             <x-input-label for="message" :value="trans('blog.table.message')" />
-            <x-textarea id="message" class="block mt-1 w-full" type="text" name="message" :value="old('message')" required autofocus autocomplete="message" />
+            <x-textarea id="message" class="block mt-1 w-full" type="text" name="message" :value="old('message')" required />
             <x-input-error :messages="$errors->get('message')" class="mt-2" />
         </div>
 

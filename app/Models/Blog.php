@@ -27,8 +27,13 @@ class Blog extends Model
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
+    public function blogCategoryRelationSync()
+    {
+        return $this->belongsToMany(BlogCategoryRelation::class, 'blog_category_relation','blog_id', 'category_id');
+    }
+
     public function blogCategoryRelation()
     {
-        return $this->hasMany(BlogCategoryRelation::class, 'blog_id','id');
+        return $this->HasMany(BlogCategoryRelation::class, 'blog_id','id');
     }
 }

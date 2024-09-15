@@ -41,7 +41,6 @@ return new class extends Migration
             Schema::create('blog_category_relation', function (Blueprint $table) {
                 $table->unsignedBigInteger('blog_id');
                 $table->unsignedBigInteger('category_id');
-                $table->timestamps();
 
                 $table->foreign('blog_id', 'FK_blog_category_relation_blog_id')
                     ->references('id')->on('blog');

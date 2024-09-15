@@ -23,10 +23,15 @@
 
                 <tbody>
                     @foreach(json_decode($blog) as $row)
-                        <tr class="bg-white border-b ">
+                        <tr class="bg-white border-b">
                             <td class="px-3 py-1">
                                 <div class="w-56 m-2 truncate">
-                                    {{ $row->title }}
+                                    <a
+                                        href='{{ url("blog/{$row->id}") }}'
+                                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                    >
+                                        {{ $row->title }}
+                                    </a>
                                 </div>
                             </td>
                             <td class="px-3 py-1">

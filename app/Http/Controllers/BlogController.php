@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BlogRequest;
+use App\Http\Resources\BlogEditResource;
 use App\Http\Resources\BlogResource;
 use App\Models\Blog;
-use App\Models\BlogCategoryRelation;
 use App\Models\Category;
 use Auth;
 use DB;
@@ -47,12 +47,7 @@ class BlogController extends Controller
             DB::beginTransaction();
             $data['user_id'] = Auth::user()->id;
             $blog = Blog::create($data);
-            foreach ($data['categoriesId'] as $id) {
-                BlogCategoryRelation::create([
-                    'blog_id' => $blog->id,
-                    'category_id' => $id
-                ]);
-            }
+            $blog->blogCategoryRelationSync()->sync($data['categoriesId']);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -73,9 +68,8 @@ class BlogController extends Controller
             return Redirect::back()->withErrors(['msg' => '500']);
         }
 
-        dump($blog);
         return view('blog/edit', [
-            'blog' => $blog,
+            'blog' => json_decode((new BlogEditResource($blog))->toJson(), true),
             'categories' => Category::query()->select('id', 'name')->get()
         ]);
     }
@@ -87,15 +81,32 @@ class BlogController extends Controller
     {
         $data = $request->validated();
         try {
+            DB::beginTransaction();
             $blog = Blog::findOrFail($id);
             $blog->fill($data);
             $blog->save();
+            $blog->blogCategoryRelationSync()->sync($data['categoriesId']);
+            DB::commit();
         } catch (\Exception $e) {
+            DB::rollback();
             Log::error("BlogController refusalUpdate", ['error' => "{$e}"]);
             Session::flash('message_error', 'check sql function refusalUpdate');
         }
 
         return redirect('blog');
+    }
+
+    /**
+     * Show the form for show a new resource.
+     */
+    public function show(string $id)
+    {
+        dump($id);
+
+        return view('blog/show', [
+//            'blog' => json_decode((new BlogEditResource($blog))->toJson(), true),
+//            'categories' => Category::query()->select('id', 'name')->get()
+        ]);
     }
 
     /**
