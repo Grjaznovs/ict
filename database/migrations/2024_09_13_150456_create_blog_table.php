@@ -50,6 +50,22 @@ return new class extends Migration
                 $table->index('category_id', 'IDX_blog_category_relation_category_id');
             });
         }
+
+        if (!Schema::hasTable('comment')) {
+            Schema::create('comment', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('blog_id');
+                $table->unsignedBigInteger('user_id');
+                $table->text('message');
+                $table->softDeletes();
+                $table->timestamps();
+
+                $table->foreign('blog_id', 'FK_comment_blog_id')->references('id')->on('blog');
+                $table->foreign('user_id', 'FK_comment_user_id')->references('id')->on('users');
+                $table->index('blog_id', 'IDX_comment_blog_id');
+                $table->index('user_id', 'IDX_comment_user_id');
+            });
+        }
     }
 
     /**
@@ -60,5 +76,6 @@ return new class extends Migration
         Schema::dropIfExists('blog');
         Schema::dropIfExists('c_category');
         Schema::dropIfExists('blog_category_relation');
+        Schema::dropIfExists('comment');
     }
 };

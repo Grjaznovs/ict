@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BlogDestroyRequest;
 use App\Http\Requests\BlogRequest;
 use App\Http\Resources\BlogEditResource;
 use App\Http\Resources\BlogResource;
+use App\Http\Resources\BlogShowResource;
 use App\Models\Blog;
 use App\Models\Category;
 use Auth;
@@ -20,9 +22,14 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $blog = Blog::query()->with('user')->get();
+        $blog = Blog::query()
+            ->with('user')
+            ->filter(request(['search']))
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('blog/index', [
+            'search' => request('search'),
             'blog' => BlogResource::collection($blog)->toJson()
         ]);
     }
@@ -101,19 +108,34 @@ class BlogController extends Controller
      */
     public function show(string $id)
     {
-        dump($id);
+        $blog = Blog::query()->with(['user', 'comment', 'comment.user'])->find($id);
 
         return view('blog/show', [
-//            'blog' => json_decode((new BlogEditResource($blog))->toJson(), true),
-//            'categories' => Category::query()->select('id', 'name')->get()
+            'data' => json_decode((new BlogShowResource($blog))->toJson(), true),
         ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): void
+    public function destroy(BlogDestroyRequest $request)
     {
-        //
+        $data = $request->validated();
+        $blog = Blog::findOrFail($data['id']);
+        try {
+            if (Auth::user()->id === $blog->user_id) {
+                DB::beginTransaction();
+                $blog->comment()->delete();
+                $blog->blogCategoryRelation()->delete();
+                $blog->delete();
+                DB::commit();
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error("BlogController refusalDestroy", ['error' => "{$e}"]);
+            Session::flash('message_error', 'check sql function refusalDestroy');
+        }
+
+        return Redirect::back();
     }
 }

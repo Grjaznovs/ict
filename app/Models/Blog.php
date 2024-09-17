@@ -22,6 +22,16 @@ class Blog extends Model
         ];
     }
 
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            $query->where(fn($query) => $query
+                ->where('title', 'like', "%{$search}%")
+                ->orWhere('message', 'like', "%{$search}%")
+            );
+        });
+    }
+
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
@@ -35,5 +45,10 @@ class Blog extends Model
     public function blogCategoryRelation()
     {
         return $this->HasMany(BlogCategoryRelation::class, 'blog_id','id');
+    }
+
+    public function comment()
+    {
+        return $this->HasMany(Comment::class, 'blog_id','id');
     }
 }

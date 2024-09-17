@@ -1,50 +1,68 @@
 <x-app-layout>
-    <div class="flex flex-col p-4">
-        <div class="flex justify-end pb-2">
-            <a href="{{ url('blog/create') }}"
-               type="button"
-               class="px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-                {{ trans('blog.btn.create') }}
-            </a>
-        </div>
+    <div class="mx-auto max-w-6xl py-2">
+        <form
+            method="get"
+            action="{{ url('blog') }}"
+            class="flex items-center justify-between font-medium"
+        >
+            <div class="relative w-10/12">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                </div>
+                <input
+                    name="search"
+                    class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="{{ trans('blog.blog.placeholder-search') }}"
+                    value="{{ $search }}"
+                />
+                <button
+                    type="submit"
+                    class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                    {{ trans('blog.btn.search') }}
+                </button>
+            </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table class="w-full text-sm text-left">
-                <thead class="text-white">
-                    <tr class="bg-teal-400 flex flex-col flex-no wrap sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
-                        <th class="px-3 py-3">{{ trans('blog.table.title') }}</th>
-                        <th class="px-3 py-3">{{ trans('blog.table.message') }}</th>
-                        <th class="px-3 py-3">{{ trans('blog.table.authors') }}</th>
-                        <th class="px-3 py-3">{{ trans('blog.table.dateTime') }}</th>
-                        <th></th>
-                    </tr>
-                </thead>
+            <div class="flex justify-end pb-2">
+                <a href="{{ url('blog/create') }}"
+                   type="button"
+                   class="px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                    {{ trans('blog.btn.create') }}
+                </a>
+            </div>
+        </form>
 
-                <tbody>
-                    @foreach(json_decode($blog) as $row)
-                        <tr class="bg-white border-b">
-                            <td class="px-3 py-1">
-                                <div class="w-56 m-2 truncate">
-                                    <a
-                                        href='{{ url("blog/{$row->id}") }}'
-                                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                    >
-                                        {{ $row->title }}
-                                    </a>
-                                </div>
-                            </td>
-                            <td class="px-3 py-1">
-                                <div class="w-96 m-2 truncate">
-                                    {{ $row->message }}
-                                </div>
-                            </td>
-                            <td class="px-3 py-1">{{ $row->userName }}</td>
-                            <td class="px-3 py-1">{{ $row->created_at }}</td>
-                            <td class="flex space-x-1 my-2">
-                                @if(Auth::user()->id === $row->user_id)
+        <div class="grid grid-cols-3 gap-4 py-4">
+            @foreach(json_decode($blog) as $row)
+                <div class="bg-white group cursor-pointer w-full max-lg:max-w-xl border border-gray-300 rounded-2xl p-5 transition-all duration-300 hover:border-indigo-600">
+                    <div class="block">
+                        <labrl class="text-right text-indigo-600 font-medium mb-3 block">
+                            <b class="px-2">{{ $row->userName }}</b>{{ $row->created_at }}
+                        </labrl>
+
+                        <h4 class="text-xl text-gray-900 font-medium leading-8 mb-5">
+                            {{ $row->title }}
+                        </h4>
+
+                        <p class="text-gray-500 leading-6 mb-10 line-clamp-5">
+                            {{ $row->message }}
+                        </p>
+
+                        <div class="flex items-center justify-between  font-medium">
+                            <a
+                                href='{{ url("blog/{$row->id}") }}'
+                                class="cursor-pointer text-lg text-indigo-600 font-semibold"
+                            >
+                                Read more..
+                            </a>
+
+                            @if(Auth::user()->id === $row->user_id)
+                                <div class="flex space-x-1 my-2">
                                     <a href='{{ url("blog/{$row->id}/edit") }}'
-                                       class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150"
+                                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150"
                                     >
                                         <svg
                                             width="24"
@@ -59,10 +77,7 @@
                                         </svg>
                                     </a>
 
-                                    <x-secondary-button
-                                        x-data=""
-                                        x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-                                    >
+                                    <x-secondary-button onclick="toggleModal('{{ $row->id }}')">
                                         <svg
                                             class="text-red-500"
                                             width="24"
@@ -71,7 +86,6 @@
                                             stroke="currentColor"
                                             fill="none"
                                         >
-                                            <path stroke="none" d="M0 0h24v24H0z"/>
                                             <line x1="4" y1="7" x2="20" y2="7" />
                                             <line x1="10" y1="11" x2="10" y2="17" />
                                             <line x1="14" y1="11" x2="14" y2="17" />
@@ -79,33 +93,53 @@
                                             <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
                                         </svg>
                                     </x-secondary-button>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
     </div>
 
-    <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-        <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
-            @csrf
-            @method('delete')
+    <div
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+        id="modal-destroy"
+        tabindex="-1" aria-hidden="true"
+    >
+        <div class="relative p-4 w-full max-w-2xl max-h-full">
+            <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                <form method="post" action='{{ url("blog/destroy") }}' class="relative p-6 flex-auto">
+                    @csrf
+                    @method('delete')
 
-            <h2 class="text-lg font-medium text-gray-900">
-                {{ __('Are you sure you want to delete your account?') }}
-            </h2>
+                    <h2 class="text-lg font-medium text-gray-900">
+                        {{ __('blog.blog.destroy-msg') }}
+                    </h2>
+                    <input hidden name="id" id="id" value="">
 
-            <div class="mt-6 flex justify-end">
-                <x-secondary-button x-on:click="$dispatch('close')">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
+                    <div class="flex items-center justify-end p-4 border-t border-solid border-blueGray-200 rounded-b">
+                        <x-secondary-button onclick="toggleModal('modal-destroy')">
+                            {{ __('blog.btn.cancel') }}
+                        </x-secondary-button>
 
-                <x-danger-button class="ms-3">
-                    {{ __('Delete Account') }}
-                </x-danger-button>
+                        <x-danger-button class="ms-3">
+                            {{ __('blog.btn.delete') }}
+                        </x-danger-button>
+                    </div>
+                </form>
             </div>
-        </form>
-    </x-modal>
+        </div>
+    </div>
+    <div class="hidden opacity-25 fixed inset-0 z-40 bg-black" id="modal-destroy-backdrop"></div>
 </x-app-layout>
+
+<script type="text/javascript">
+    function toggleModal(id) {
+        document.getElementById('id').value = id;
+        document.getElementById('modal-destroy').classList.toggle("hidden");
+        document.getElementById('modal-destroy').classList.toggle("flex");
+        document.getElementById("modal-destroy-backdrop").classList.toggle("hidden");
+        document.getElementById("modal-destroy-backdrop").classList.toggle("flex");
+    }
+</script>

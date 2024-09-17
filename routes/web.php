@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,9 @@ Route::middleware('auth')->group(function () {
     Route::resources([
         'blog' => BlogController::class
     ]);
+//    Route::any('/blog', [BlogController::class, 'index']);
+    Route::post('/comment/{blogId}', [CommentController::class, 'store']);
+    Route::delete('/comment/destroy', [CommentController::class, 'destroy']);
 });
 
 require __DIR__.'/auth.php';
