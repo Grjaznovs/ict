@@ -52,8 +52,7 @@ class BlogController extends Controller
         $data = $request->validated();
         try {
             DB::beginTransaction();
-            $data['user_id'] = Auth::user()->id;
-            $blog = Blog::create($data);
+            $blog = Auth::user()->blog()->save(new Blog($data));
             $blog->blogCategoryRelationSync()->sync($data['categoriesId']);
             DB::commit();
         } catch (\Exception $e) {
@@ -72,7 +71,7 @@ class BlogController extends Controller
     {
         $blog = Blog::query()->with('blogCategoryRelation')->find($id);
         if ($blog->user_id !== Auth::user()->id) {
-            return Redirect::back()->withErrors(['msg' => '500']);
+            return Redirect::back()->withErrors(['msg' => '403']);
         }
 
         return view('blog/edit', [

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CommentDestroyRequest;
 use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
 class CommentController extends Controller
@@ -17,9 +17,8 @@ class CommentController extends Controller
     public function store(CommentRequest $request, $blogId)
     {
         $data = $request->validated();
-        $data['user_id'] = Auth::user()->id;
         $data['blog_id'] = $blogId;
-        Comment::create($data);
+        Auth::user()->comment()->save(new Comment($data));
 
         return redirect('blog/'.$blogId);
     }
